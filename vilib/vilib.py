@@ -271,6 +271,7 @@ class Vilib(object):
                 # st = time.time()
 
                 # ----------- image gains and effects ----------------
+                picam2.set_controls({"AwbMode": 'Auto'})
 
                 # ----------- image detection and recognition ----------------
                 Vilib.img = Vilib.color_detect_func(Vilib.img)
