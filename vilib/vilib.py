@@ -233,7 +233,7 @@ class Vilib(object):
 
         # init picamera
         picam2 = Picamera2()
-
+        picam2.set_controls({"AwbMode": 'Auto'})
         preview_config = picam2.preview_configuration
         # preview_config.size = (800, 600)
         preview_config.size = Vilib.camera_size
@@ -271,7 +271,6 @@ class Vilib(object):
                 # st = time.time()
 
                 # ----------- image gains and effects ----------------
-                picam2.set_controls({"AwbMode": 'Auto'})
 
                 # ----------- image detection and recognition ----------------
                 Vilib.img = Vilib.color_detect_func(Vilib.img)
