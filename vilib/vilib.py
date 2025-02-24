@@ -17,6 +17,7 @@ if 'VILIB_WELCOME' not in os.environ or os.environ['VILIB_WELCOME'] not in [
 os.environ['LIBCAMERA_LOG_LEVELS'] = '*:ERROR'
 from picamera2 import Picamera2
 import libcamera
+from libcamera import controls
 
 import cv2
 import numpy as np
@@ -233,6 +234,8 @@ class Vilib(object):
 
         # init picamera
         picam2 = Picamera2()
+            # auto white balance and continuous autofocus for camera module v3
+        picam2.set_controls({"AwbMode": controls.AwbModeEnum.Auto, "AfMode": controls.AfModeEnum.Continuous})
 
         preview_config = picam2.preview_configuration
         # preview_config.size = (800, 600)
