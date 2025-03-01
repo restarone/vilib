@@ -16,9 +16,9 @@ if 'VILIB_WELCOME' not in os.environ or os.environ['VILIB_WELCOME'] not in [
 # set libcamera2 log level
 os.environ['LIBCAMERA_LOG_LEVELS'] = '*:ERROR'
 from picamera2 import Picamera2
-from picamera2.encoders import H264Encoder
-from picamera2.outputs import FfmpegOutput
+
 import libcamera
+import subprocess
 
 import cv2
 import numpy as np
@@ -252,11 +252,8 @@ class Vilib(object):
         
         try:
             if Vilib.record_av:
-               video_config = picam2.create_video_configuration()
-               picam2.configure(video_config)
-               encoder = H264Encoder(10000000)
-               output = FfmpegOutput('test.mp4', audio=True)
-               picam2.start_and_record_video(encoder, output)
+               ffmpeg = subprocess.Popen(['ffmpeg', '-i', '-', '-vcodec', 'copy', '-an', 'test.mpg',], stdin=subprocess.PIPE)
+               picam2.start_recording(ffmpeg.stdin, format='h264', bitrate=2000000)
             else:
                picam2.start()   
         except Exception as e:
