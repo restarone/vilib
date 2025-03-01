@@ -247,9 +247,13 @@ class Vilib(object):
         preview_config.queue = True
         # preview_config.raw = {'size': (2304, 1296)}
         preview_config.controls = {'FrameRate': 60} # change picam2.capture_array() takes time
-
+        
         try:
             picam2.start()
+            if Vilib.record_av:
+               encoder = H264Encoder(10000000)
+               output = FfmpegOutput('test.mp4', audio=True)
+               picam2.start_recording(encoder, output)
         except Exception as e:
             print(f"\033[38;5;1mError:\033[0m\n{e}")
             print("\nPlease check whether the camera is connected well" +\
@@ -341,16 +345,19 @@ class Vilib(object):
             print(e)
         finally:
             print('camera close')
+            if Vilib.record_av:
+               picam2.stop_recording()    
             picam2.close()
             cv2.destroyAllWindows()
 
     @staticmethod
-    def camera_start(vflip=False, hflip=False, size=None):
+    def camera_start(vflip=False, hflip=False, size=None, record_av=False):
         if size is not None:
             Vilib.camera_size = size
         Vilib.camera_hflip = hflip
         Vilib.camera_vflip = vflip
         Vilib.camera_run = True
+        Vilib.record_av = record_av
         Vilib.camera_thread = threading.Thread(target=Vilib.camera, name="vilib")
         Vilib.camera_thread.daemon = False
         Vilib.camera_thread.start()
