@@ -252,6 +252,8 @@ class Vilib(object):
         
         try:
             if Vilib.record_av:
+               video_config = picam2.create_video_configuration()
+               picam2.configure(video_config)
                encoder = H264Encoder(10000000)
                output = FfmpegOutput('test.mp4', audio=True)
                picam2.start_and_record_video(encoder, output)
