@@ -251,11 +251,12 @@ class Vilib(object):
         preview_config.controls = {'FrameRate': 60} # change picam2.capture_array() takes time
         
         try:
-            picam2.start()
             if Vilib.record_av:
                encoder = H264Encoder(10000000)
                output = FfmpegOutput('test.mp4', audio=True)
-               picam2.start_recording(encoder, output)
+               picam2.start_and_record_video(encoder, output)
+            else:
+               picam2.start()   
         except Exception as e:
             print(f"\033[38;5;1mError:\033[0m\n{e}")
             print("\nPlease check whether the camera is connected well" +\
