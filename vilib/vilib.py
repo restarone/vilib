@@ -16,6 +16,8 @@ if 'VILIB_WELCOME' not in os.environ or os.environ['VILIB_WELCOME'] not in [
 # set libcamera2 log level
 os.environ['LIBCAMERA_LOG_LEVELS'] = '*:ERROR'
 from picamera2 import Picamera2
+from picamera2.encoders import H264Encoder
+from picamera2.outputs import FfmpegOutput
 import libcamera
 
 import cv2
