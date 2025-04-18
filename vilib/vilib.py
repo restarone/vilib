@@ -16,7 +16,9 @@ if 'VILIB_WELCOME' not in os.environ or os.environ['VILIB_WELCOME'] not in [
 # set libcamera2 log level
 os.environ['LIBCAMERA_LOG_LEVELS'] = '*:ERROR'
 from picamera2 import Picamera2
+
 import libcamera
+import subprocess
 
 import cv2
 import numpy as np
@@ -247,9 +249,13 @@ class Vilib(object):
         preview_config.queue = True
         # preview_config.raw = {'size': (2304, 1296)}
         preview_config.controls = {'FrameRate': 60} # change picam2.capture_array() takes time
-
+        
         try:
-            picam2.start()
+            if Vilib.record_av:
+               ffmpeg = subprocess.Popen(['ffmpeg', '-i', '-', '-vcodec', 'copy', '-an', 'test.mpg',], stdin=subprocess.PIPE)
+               picam2.start_recording(ffmpeg.stdin, format='h264', bitrate=2000000)
+            else:
+               picam2.start()   
         except Exception as e:
             print(f"\033[38;5;1mError:\033[0m\n{e}")
             print("\nPlease check whether the camera is connected well" +\
@@ -341,16 +347,19 @@ class Vilib(object):
             print(e)
         finally:
             print('camera close')
+            if Vilib.record_av:
+               picam2.stop_recording()    
             picam2.close()
             cv2.destroyAllWindows()
 
     @staticmethod
-    def camera_start(vflip=False, hflip=False, size=None):
+    def camera_start(vflip=False, hflip=False, size=None, record_av=False):
         if size is not None:
             Vilib.camera_size = size
         Vilib.camera_hflip = hflip
         Vilib.camera_vflip = vflip
         Vilib.camera_run = True
+        Vilib.record_av = record_av
         Vilib.camera_thread = threading.Thread(target=Vilib.camera, name="vilib")
         Vilib.camera_thread.daemon = False
         Vilib.camera_thread.start()
